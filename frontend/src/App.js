@@ -1,10 +1,39 @@
-import './App.css';
+
+
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Landing} from './components';
+
 
 function App() {
+
+  
+  
+
+  
   return (
-    <div className="App">
-      <h1>Hello welcome to MangaKorner</h1>
-    </div>
+    <Router>
+        <div className="App">
+          <div className='content'>
+            <Routes>
+              <Route
+                exact
+                path="/"
+                element={
+                  <>
+                    <Landing />
+                  </>
+                }
+              />
+
+
+              
+
+            </Routes>
+
+          </div>
+          
+        </div>
+    </Router>
   );
 }
 
