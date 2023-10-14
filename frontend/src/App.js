@@ -4,6 +4,7 @@ import {
   CreateCharacter,
   EditCharacter,
   GenerateScript,
+  MangaEditor,
 } from "./components";
 
 function App() {
@@ -47,6 +48,15 @@ function App() {
               element={
                 <>
                   <GenerateScript />
+                </>
+              }
+            />
+            <Route
+              exact
+              path="/editManga"
+              element={
+                <>
+                  <MangaEditor />
                 </>
               }
             />

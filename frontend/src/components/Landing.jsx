@@ -10,7 +10,6 @@ function Landing(){
 
                 <div className="mt-36 min-w-4xl flex">
 
-
                     <div>
                         <h1 className="text-6xl font-semibold leading-normal">Think you need artistry to bring <br />out the author in you?</h1>
                         <p className="mt-8 text-5xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Not anymore!</p>

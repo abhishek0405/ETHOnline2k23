@@ -1,9 +1,27 @@
 import { logo } from "../assets"
 import React, { useEffect, useState } from "react";
+//import { connectWallet, getAccount } from "../utils/wallet"
 
 function Navbar(){
 
 
+    // const [account, setAccount] = useState("");
+
+    // useEffect(() => {
+    //     (async () => {
+    //     const account = await getAccount()
+    //     console.log(account)
+    //     setAccount(account)
+    //     })();
+    // }, [])
+
+
+
+    // const onConnectWallet = async () => {
+    //     await connectWallet();
+    //     const account = await getAccount();
+    //     setAccount(account);
+    //   }
 
     return (
         <>
@@ -20,7 +38,7 @@ function Navbar(){
                             <li><a href="/editCharacter">Edit characters</a></li>
                             <li><a href="/">View characters</a></li>
                             <li><a href="/generateScript">Generate script</a></li>
-                            <li><a href="/">Edit manga</a></li>
+                            <li><a href="/editManga">Edit manga</a></li>
                             <li><a href="/">Mint Manga NFT</a></li>
                         </ul>
                         
@@ -31,6 +49,8 @@ function Navbar(){
 
                     
                 </ul>
+{/*                 
+                <button onClick={onConnectWallet} className="btn btn-orange">{account ? account : "Connect Wallet"}</button> */}
                 <button className="btn btn-orange">Connect wallet</button>
             </nav>
         </>
