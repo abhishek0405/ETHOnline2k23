@@ -19,7 +19,7 @@ function Navbar(){
                             <li><a href="/createCharacter">Generate characters</a></li>
                             <li><a href="/editCharacter">Edit characters</a></li>
                             <li><a href="/">View characters</a></li>
-                            <li><a href="/">Generate script</a></li>
+                            <li><a href="/generateScript">Generate script</a></li>
                             <li><a href="/">Edit manga</a></li>
                             <li><a href="/">Mint Manga NFT</a></li>
                         </ul>
