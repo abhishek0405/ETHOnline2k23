@@ -136,3 +136,37 @@ li {
   width: 100%;
   max-width: 300px; /* Adjust as needed for your design */
 }
+
+
+.form-container {
+  max-width: 400px;
+  padding: 20px;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ 
+}
+
+.form-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.form-field::placeholder {
+  color: #cccccccf;
+}
+
+.form-field.file-upload {
+  padding: 0;
+}
+
+input{
+  color: #000;
+}
+
+textarea{
+  color: #000;
+}

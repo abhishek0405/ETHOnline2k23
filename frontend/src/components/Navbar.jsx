@@ -21,7 +21,7 @@ function Navbar(){
                             <li style={{fontSize:16}}><a href="/">View characters</a></li>
                             <li style={{fontSize:16}}><a href="/">Generate script</a></li>
                             <li style={{fontSize:16}}><a href="/">Edit manga</a></li>
-                            <li style={{fontSize:16}}><a href="/">Mint</a></li>
+                            <li style={{fontSize:16}}><a href="/mintNFT">Mint</a></li>
                         </ul>
                         
                     </li>

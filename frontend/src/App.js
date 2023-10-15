@@ -1,9 +1,9 @@
 
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Landing, Marketplace} from './components';
-import MyNFT from "./components/MyNFTs";
-import { NavLink } from 'react-router-dom'
+import { Landing, Marketplace, MyNFT, MintNFT} from './components';
+
+
 
 
 function App() {
@@ -43,6 +43,16 @@ function App() {
                 element={
                   <>
                     <MyNFT />
+                  </>
+                }
+              />
+
+              <Route
+                exact
+                path="/mintNFT"
+                element={
+                  <>
+                    <MintNFT />
                   </>
                 }
               />
