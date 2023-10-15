@@ -8,25 +8,25 @@ function Navbar(){
     return (
         <>
             <nav className="flex items-center">
-                <img src={logo} alt="" className="w-44" />
+                <img src={logo} alt="" className="w-44"  style={{height: 70}}/>
                 <ul className="flex-1 text-center" id="navbar">
                     <li><a href="/">Home</a></li>
-                    <li><a href="/">Marketplace</a></li>
+                    <li><a href="/marketplace">Marketplace</a></li>
 
                     <li>
                         <a href="/createNFT">Create NFT</a>
-                        <ul>
-                            <li><a href="/createCharacter">Generate characters</a></li>
-                            <li><a href="/editCharacter">Edit characters</a></li>
-                            <li><a href="/">View characters</a></li>
-                            <li><a href="/">Generate script</a></li>
-                            <li><a href="/">Edit manga</a></li>
-                            <li><a href="/">Mint Manga NFT</a></li>
+                        <ul style={{fontSize:10}}> 
+                            <li style={{fontSize:16, textAlign: 'left'}}><a href="/createCharacter">Generate</a></li>
+                            <li style={{fontSize:16}}><a href="/editCharacter">Edit characters</a></li>
+                            <li style={{fontSize:16}}><a href="/">View characters</a></li>
+                            <li style={{fontSize:16}}><a href="/">Generate script</a></li>
+                            <li style={{fontSize:16}}><a href="/">Edit manga</a></li>
+                            <li style={{fontSize:16}}><a href="/">Mint</a></li>
                         </ul>
                         
                     </li>
 
-                    <li><a href="/">My NFTs</a></li>
+                    <li><a href="/myNFTs">My NFTs</a></li>
                     
 
                     

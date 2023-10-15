@@ -1,8 +1,9 @@
 
 import Landing from './Landing'
+import Marketplace from './Marketplace'
 
 
 export {
-    Landing
+    Landing, Marketplace
 
 }

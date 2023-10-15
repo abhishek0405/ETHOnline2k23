@@ -18,7 +18,7 @@ function Landing(){
                         <button className="btn btn-orange mt-12" style={{fontSize : '18px'}}>Create NFT now!</button>
                     </div>
                     
-                    <div className="ml-20 overflow-hidden" style={{position : 'absolute',top : '16%', left : '63%'}}> 
+                    <div className="ml-20 overflow-hidden" style={{position : 'absolute',top : '14%', left : '63%'}}> 
                         <img className="overflow-hidden" src={orange_girl} alt="" />
                     </div>
                     
