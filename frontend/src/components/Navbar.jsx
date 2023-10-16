@@ -1,8 +1,35 @@
 import { logo } from "../assets"
 import React, { useEffect, useState } from "react";
+import { ethers } from "ethers"
 
 function Navbar(){
 
+    const [address, setAddress] = useState('')
+
+
+    const btnhandler = () => { 
+        console.log('hellp')
+  
+        if (window.ethereum) { 
+      
+          window.ethereum 
+            .request({ method: "eth_requestAccounts" }) 
+            .then((res) => {
+                setAddress(res[0])
+             
+            }); 
+        } else { 
+          alert("install metamask extension!!"); 
+        } 
+    }
+
+
+   
+
+    useEffect(() => {
+        btnhandler()
+    
+      }, []); 
 
 
     return (
@@ -31,7 +58,15 @@ function Navbar(){
 
                     
                 </ul>
-                <button className="btn btn-orange">Connect wallet</button>
+
+                {address === '' ? (
+                    <button className="btn btn-orange" onClick={btnhandler}>Connect wallet</button>
+                ) : (
+
+                    <div>{address}</div>
+                    
+                )}
+                
             </nav>
         </>
     )

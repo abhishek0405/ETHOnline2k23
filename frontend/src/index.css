@@ -34,8 +34,9 @@ li {
   display: inline-block;
   list-style-type: none;
   font-weight: bold;
-  padding-left: 25px;
-  padding-right: 30px;
+  margin-right: 8px;
+  /* padding-left: 15px;
+  padding-right: 15px; */
   font-size: large;
   
 }
