@@ -2,6 +2,7 @@ import { logo } from "../assets"
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers"
 
+
 function Navbar(){
 
     const [address, setAddress] = useState('')
@@ -9,18 +10,28 @@ function Navbar(){
 
     const btnhandler = () => { 
         console.log('hellp')
-  
-        if (window.ethereum) { 
+
+
+        if(localStorage.getItem('metamaskConnect') !== 'true'){
+            if (window.ethereum) { 
       
-          window.ethereum 
-            .request({ method: "eth_requestAccounts" }) 
-            .then((res) => {
-                setAddress(res[0])
-             
-            }); 
-        } else { 
-          alert("install metamask extension!!"); 
-        } 
+                window.ethereum 
+                  .request({ method: "eth_requestAccounts" }) 
+                  .then((res) => {
+                      setAddress(res[0])
+                      localStorage.setItem('metamaskConnect', 'true')
+                      localStorage.setItem('metamaskAddress', res[0])
+                   
+                  }); 
+              } else { 
+                alert("install metamask extension!!"); 
+              } 
+        }
+        else{
+            setAddress(localStorage.getItem('metamaskAddress'))
+        }
+  
+       
     }
 
 
@@ -48,7 +59,7 @@ function Navbar(){
                             <li style={{fontSize:16}}><a href="/">View characters</a></li>
                             <li style={{fontSize:16}}><a href="/">Generate script</a></li>
                             <li style={{fontSize:16}}><a href="/">Edit manga</a></li>
-                            <li style={{fontSize:16}}><a href="/mintNFT">Mint</a></li>
+                            <li style={{fontSize:16}}><a href="/mintNFT">Mint NFT</a></li>
                         </ul>
                         
                     </li>
