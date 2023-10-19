@@ -164,10 +164,10 @@ li {
   padding: 0;
 }
 
-input{
-  color: #988a8ab1;
+input[type="text"]{
+  color: #161616b1;
 }
 
 textarea{
-  color: #988a8ab1;
+  color: #161616b1;
 }

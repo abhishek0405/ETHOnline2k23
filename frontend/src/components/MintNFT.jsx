@@ -3,6 +3,7 @@ import { useState } from "react"
 import Navbar from "./Navbar"
 import { Web3Storage } from 'web3.storage'
 
+
 function MintNFT(){
 
 
@@ -11,6 +12,7 @@ function MintNFT(){
     const [title, setTitle] = useState('')
     const [plotline, setPlotline] = useState('')
     const [message, setMessage] = useState('')
+    const [loading, setLoading] = useState('Submit')
     
 
     const handleSubmit = async (e) => {
@@ -19,10 +21,13 @@ function MintNFT(){
 
         try{
             const fileInput = document.querySelector('input[type="file"]')
-
+            setLoading('Loading')
             const rootCid = await client.put(fileInput.files)
             console.log(rootCid)
             setMessage('Successfully uploaded: ' + rootCid)
+            setLoading('Submit')
+            setTitle('')
+            setPlotline('')
         }
         catch(error){
             console.log(error)
@@ -41,12 +46,12 @@ function MintNFT(){
                     <form>
                     <div>
                         <label for="title">Title:</label>
-                        <input type="text" id="title" value={title} class="form-field" onChange={e => setTitle(e.target.value)} placeholder="Title" />
+                        <input type="text" id="title" value={title} className="form-field" onChange={e => setTitle(e.target.value)} placeholder="Title" />
                     </div>
 
                     <div>
                         <label for="plotline">Plotline:</label>
-                        <textarea id="plotline" name="plotline" class="form-field" rows="5" value={plotline} onChange={e => setPlotline(e.target.value)} placeholder="Title"></textarea>
+                        <textarea id="plotline" name="plotline" className="form-field" rows="5" value={plotline} onChange={e => setPlotline(e.target.value)} placeholder="Title"></textarea>
                     </div>
 
                     <div>
@@ -54,7 +59,7 @@ function MintNFT(){
                         <input type="file" id="file" name="file" class="form-field file-upload" />
                     </div>
 
-                    <button type="submit" className="btn btn-orange" onClick={handleSubmit}>Submit</button>
+                    <button type="submit" className="btn btn-orange" onClick={handleSubmit}>{loading}</button>
                     <p>{message}</p>
                     </form>
                 </div>
