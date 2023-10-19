@@ -3,4 +3,18 @@ import EditCharacter from "./EditCharacter";
 import CreateCharacter from "./CreateCharacter";
 import GenerateScript from "./GenerateScript";
 import MangaEditor from "./MangaEditor";
-export { CreateCharacter, EditCharacter, Landing, GenerateScript, MangaEditor };
+import Marketplace from "./Marketplace";
+import MyNFT from "./MyNFTs";
+import MintNFT from "./MintNFT";
+
+export {
+  Landing,
+  Marketplace,
+  MyNFT,
+  MintNFT,
+  CreateCharacter,
+  EditCharacter,
+  Landing,
+  GenerateScript,
+  MangaEditor,
+};

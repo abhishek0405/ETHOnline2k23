@@ -6,6 +6,7 @@ import {
   GenerateScript,
   MangaEditor,
 } from "./components";
+import { Marketplace, MyNFT, MintNFT } from "./components";
 
 function App() {
   return (
@@ -22,12 +23,33 @@ function App() {
                 </>
               }
             />
+
             <Route
               exact
-              path="/createCharacter"
+              path="/marketplace"
               element={
                 <>
-                  <CreateCharacter />
+                  <Marketplace />
+                </>
+              }
+            />
+
+            <Route
+              exact
+              path="/myNFTs"
+              element={
+                <>
+                  <MyNFT />
+                </>
+              }
+            />
+
+            <Route
+              exact
+              path="/mintNFT"
+              element={
+                <>
+                  <MintNFT />
                 </>
               }
             />
