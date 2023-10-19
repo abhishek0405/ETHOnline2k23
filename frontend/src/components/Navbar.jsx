@@ -42,6 +42,23 @@ function Navbar(){
     
       }, []); 
 
+    // const [account, setAccount] = useState("");
+
+    // useEffect(() => {
+    //     (async () => {
+    //     const account = await getAccount()
+    //     console.log(account)
+    //     setAccount(account)
+    //     })();
+    // }, [])
+
+
+
+    // const onConnectWallet = async () => {
+    //     await connectWallet();
+    //     const account = await getAccount();
+    //     setAccount(account);
+    //   }
 
     return (
         <>
