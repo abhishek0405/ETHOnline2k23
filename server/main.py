@@ -1,4 +1,3 @@
-
 import json
 from fastapi import FastAPI
 from diffusers import StableDiffusionPipeline
@@ -15,6 +14,7 @@ from dotenv import load_dotenv
 from base64 import b64encode
 import secrets
 from langchain.llms import OpenAI
+import re
 
 
 def generate_big_random_number(digits): return int(
@@ -47,11 +47,9 @@ SD_URL = os.getenv('SD_URL')
 PINATA_JWT = os.getenv('PINATA_JWT')
 OPEN_AI_KEY = os.getenv('OPEN_AI_KEY')
 os.environ['OPENAI_API_KEY'] = OPEN_AI_KEY
-print(SD_API_KEY)
-print(SD_URL)
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
-llm = OpenAI(temperature=0.6)
+llm = OpenAI(temperature=0.6, max_tokens=3000)
 
 
 app = FastAPI()
@@ -115,14 +113,30 @@ async def edit(request: EditRequest):
 async def edit(request: ScriptRequest):
     print("processing script gen")
     input_prompt = f'''
-        Your task is to generate script for a manga comic.  You will be provided the character names and a baseline plot, you need to generate a script in manga style and break it down to smaller scenes. Each scene basically represents a manga strip which will be animated, So ensure to keep the scenes and dialogues within each scene small. Lets limit the total number of scenes to be less than 10. Try to generate a conclusive story within these constraints.
+        Your task is to generate script for a manga comic.  You will be provided the character names and a baseline plot, you need to generate a script in manga style and break it down to smaller scenes. Each scene basically represents a manga strip which will be animated, So ensure to keep the scenes and dialogues within each scene small. Lets limit the total number of scenes to be exactly 5. Ensure that the script is returned in the following format (the hardcoded <END_OF_SCENE> must be there after each scene is over):
+
+        Scene #n
+        <Dialogues>
+
+        <END_OF_SCENE>
+        Sceene #n+1
+        <Dialogues>
+        
+        Try to generate a conclusive story within these constraints and the following details
 
         Characters : {request.characters}
 
         Baseline plot : {request.baselinePlot}
         '''
 
-    script = llm(input_prompt)
+    # script = llm(input_prompt)
+    script = generate_mock_create_response()
+    scenes = script.split('<END_OF_SCENE>')[:-1]
 
-    print(script)
-    return script
+    for scene in scenes:
+        print(scene)
+    return scenes
+
+
+def generate_mock_create_response():
+    return "\nScene #1\nElisa: Ready?\nYvan: Ready!\n\n<END_OF_SCENE>\nScene #2\nDestro: So you two think you can take me on?\nElisa: You're in for a surprise!\nYvan: Let's do this!\n\n<END_OF_SCENE>\nScene #3\nDestro: *laughs* You two are in way over your heads!\nElisa: Don't underestimate us!\nYvan: *summons a fireball* Let's show him!\n\n<END_OF_SCENE>\nScene #4\nDestro: *dodges fireball* Impressive!\nElisa: *charges with her sword*\nYvan: *summons another fireball*\n\n<END_OF_SCENE>\nScene #5\nDestro: *emits a powerful energy beam*\nElisa: *gets hit* Argh!!\nYvan: *rages up*\n\n<END_OF_SCENE>\nScene #6\nYvan: *summons a high intensity fire attack*\nDestro: *blocks the attack with his energy beam* Impressive! You two are too young to be killed off. Grow stronger so that we can battle again!\n\n<END_OF_SCENE>"
