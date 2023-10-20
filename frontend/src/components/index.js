@@ -8,7 +8,6 @@ import MyNFT from "./MyNFTs";
 import MintNFT from "./MintNFT";
 
 export {
-  Landing,
   Marketplace,
   MyNFT,
   MintNFT,

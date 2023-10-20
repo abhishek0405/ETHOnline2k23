@@ -3,6 +3,8 @@ import axios from 'axios'
 import Navbar from './Navbar'
 import { RingLoader
  } from 'react-spinners';
+ import { Web3Storage } from 'web3.storage'
+
 
 
 
@@ -17,6 +19,9 @@ function CreateCharacter() {
     const [imageUrl, setImageUrl] = useState('')
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)
+    const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
+    const client = new Web3Storage({ token: token });
+
     const JWT = process.env.REACT_APP_JWT
     
 
@@ -56,51 +61,31 @@ function CreateCharacter() {
       }
 
 
-
-      const ipfsPin = async (formData) => {
-
-        try{
-          const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-            maxBodyLength: "Infinity",
-            headers: {
-              'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-              'Authorization': `Bearer ${JWT}`
-            }
-          });
-          console.log(res.data);
-        } catch (error) {
-          console.log(error);
-        }
-
-      }
-
-
       const handleSave = async (e) => {
         e.preventDefault()
-        console.log('hello')
-        const formData = new FormData();
-        getImageBlob(imageUrl).then((blob) => {
-          formData.append('file', blob);
-          const pinataMetadata = JSON.stringify({
-            name: name,
-          });
-          formData.append('pinataMetadata', pinataMetadata)
-          console.log(pinataMetadata)
-          
-          const pinataOptions = JSON.stringify({
-            cidVersion: 0,
-          })
-          formData.append('pinataOptions', pinataOptions);
-          ipfsPin(formData)
-  
-          
-        });
-        
-        
-        
-
-
+        try{
+            const fileInput = await getFile(imageUrl);
+            console.log("file input is ",fileInput)
+            const rootCid = await client.put(fileInput)
+            console.log(rootCid)
+            alert("saved succesfully")
+        }
+        catch(error){
+            console.log(error)
+        }
       }
+
+      const getFile = async(imageUrl)=>{
+        console.log("getting file")
+          const fileName = name;
+          const response = await fetch(imageUrl);
+          console.log("response is ",response)
+          const contentType = response.headers.get('content-type')
+          const blob = await response.blob()
+          const file = [new File([blob], fileName, { contentType })]      
+          return file;
+      }
+      
 
     return(
         <>
@@ -147,17 +132,21 @@ function CreateCharacter() {
                     {imageUrl && (
                     <>
                     <img src={imageUrl} alt="Generated Image" />
-                     <form className='mt-2 ml-2'>
-                    <input type="text" className='rounded-full h-8 w-100 text-center text-black' placeholder='Enter name' value={name} onChange={(e) => setName(e.target.value)} />
-                    <button className='btn btn-orange ml-2' onClick={handleSave}>Save</button>
-                   </form>
+
                    </>
+                   
                    )
                    
+                   
                     }
+
                    </>
                   )}
-                </div> 
+                </div>
+                <form className='mt-2 ml-2'>
+                    <input type="text" className='rounded-full h-8 w-100 text-center text-black' placeholder='Enter name' value={name} onChange={(e) => setName(e.target.value)} />
+                    <button className='btn btn-orange ml-2' onClick={handleSave}>Save</button>
+                  </form> 
                 </div>
 
 

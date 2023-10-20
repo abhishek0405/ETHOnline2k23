@@ -6,6 +6,8 @@ import html2canvas from 'html2canvas';
 function MangaEditor(){
   const contentToMergeRef = useRef(null);
 
+  
+
   const handleDownload = () => {
     if (contentToMergeRef.current) {
       html2canvas(contentToMergeRef.current).then((canvas) => {

@@ -6,8 +6,8 @@ import { Web3Storage } from 'web3.storage'
 
 function MintNFT(){
 
-
-    const client = new Web3Storage({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGFBOEQ0QzMwNmI4ZjhjNjZCMTQyN2Y3NEIzZjlDNTI2YzE0RTFDRWEiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjkwOTc5NDk3MjksIm5hbWUiOiJ5dXUifQ.t8HIerpToxPT9zgQzsZlAJeCWIBnZqlAaSOoZVkVUnw" })
+    const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
+    const client = new Web3Storage({ token: token });
 
     const [title, setTitle] = useState('')
     const [plotline, setPlotline] = useState('')
@@ -22,6 +22,7 @@ function MintNFT(){
         try{
             const fileInput = document.querySelector('input[type="file"]')
             setLoading('Loading')
+            console.log(fileInput.files[0])
             const rootCid = await client.put(fileInput.files)
             console.log(rootCid)
             setMessage('Successfully uploaded: ' + rootCid)

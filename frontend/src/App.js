@@ -82,6 +82,15 @@ function App() {
                 </>
               }
             />
+            <Route
+              exact
+              path="/createCharacter"
+              element={
+                <>
+                  <CreateCharacter />
+                </>
+              }
+            />
           </Routes>
         </div>
       </div>

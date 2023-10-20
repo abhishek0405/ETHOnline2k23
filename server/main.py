@@ -103,10 +103,11 @@ async def edit(request: EditRequest):
 
     response = requests.post(SD_URL, json=data, headers={
                              'x-api-key': SD_API_KEY})
-    print(response)
-    image = Image.open(io.BytesIO(response.content))
-    image.save("./imgedit.png")
-    return FileResponse('./imgedit.png')
+    print("server responded with")
+    print(response.text)
+    # image = Image.open(io.BytesIO(response.content))
+    # image.save("./imgedit.png")
+    # return FileResponse('./imgedit.png')
 
 
 @app.post("/generateScript")
