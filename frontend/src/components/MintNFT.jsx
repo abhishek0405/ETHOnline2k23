@@ -2,17 +2,31 @@
 import { useState } from "react"
 import Navbar from "./Navbar"
 import { Web3Storage } from 'web3.storage'
+import { Database } from "@tableland/sdk";
+import { Wallet, getDefaultProvider } from "ethers";
 
+
+const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
+const client = new Web3Storage({ token: token });
+const privateKey = process.env.REACT_APP_PRIVATE_KEY;
+const wallet = new Wallet(privateKey);
+
+const provider = getDefaultProvider("https://goerli.optimism.io/");
+const signer = wallet.connect(provider);
+
+
+const db = new Database({ signer });
+console.log(db)
 
 function MintNFT(){
 
-    const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
-    const client = new Web3Storage({ token: token });
+   
 
     const [title, setTitle] = useState('')
     const [plotline, setPlotline] = useState('')
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState('Submit')
+    const tableName = "manga_420_27"
     
 
     const handleSubmit = async (e) => {
@@ -29,6 +43,17 @@ function MintNFT(){
             setLoading('Submit')
             setTitle('')
             setPlotline('')
+            // Insert a row into the table
+            const { meta: insert } = await db
+            .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
+            .bind(rootCid, localStorage.getItem("metamaskAddress"), title, plotline)
+            .run();
+
+            // Wait for transaction finality
+            await insert.txn?.wait();
+            console.log('done')
+            const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all();
+            console.log(results);
         }
         catch(error){
             console.log(error)
