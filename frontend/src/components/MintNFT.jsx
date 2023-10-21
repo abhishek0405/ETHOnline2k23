@@ -8,6 +8,7 @@ import { ethers } from "ethers"
 import mantleABI from "../contracts/MantleMarketplace.json"
 import mangaABI from "../contracts/MarketKornerABI.json"
 import Web3 from 'web3'
+const { ethereum } = window;
 
 
 
@@ -22,7 +23,7 @@ const signerOptimism = wallet.connect(providerOptimism);
 
 
 const db = new Database({ signerOptimism })
-
+console.log("db",db)
 //new manga contract
 //0xc5801B90010c945559Ec736a7882d619B2C7256c
 
@@ -83,14 +84,20 @@ function MintNFT(){
                   const tx = await contract.createToken(rootCid, price);
                   const receipt = await tx.wait();
                   setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
+                  console.log("minted succesfully")
                   console.log(receipt)
-                 
+                 //switch chain
+                 await ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x1A4' }],
+                  });
                    // Insert a row into the table
+                
                 const { meta: insert } = await db
                 .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
-                .bind(rootCid, localStorage.getItem("metamaskAddress"), title, plotline)
+                .bind(rootCid, accounts[0], title, plotline)
                 .run();
-
+                console.log("executing db statement")
                 // Wait for transaction finality
                 await insert.txn?.wait()
                 console.log('done')
@@ -104,6 +111,7 @@ function MintNFT(){
 
  
               } catch (e) {
+                console.log("errror " + e.message)
                 setError(e.message);
               }
 
