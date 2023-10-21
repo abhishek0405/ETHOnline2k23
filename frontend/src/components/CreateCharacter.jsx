@@ -29,7 +29,8 @@ function CreateCharacter() {
     const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
     const client = new Web3Storage({ token: token });
     const tableName = "character_420_28"
-    const JWT = process.env.REACT_APP_JWT
+
+    //const JWT = process.env.REACT_APP_JWT
     
 
     // useEffect(()=> {

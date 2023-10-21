@@ -2,31 +2,43 @@
 import { useState } from "react"
 import Navbar from "./Navbar"
 import { Web3Storage } from 'web3.storage'
-import { Database } from "@tableland/sdk";
-import { Wallet, getDefaultProvider } from "ethers";
+import { Database } from "@tableland/sdk"
+import { Wallet, getDefaultProvider } from "ethers"
+import { ethers } from "ethers"
+import mantleABI from "../contracts/MantleMarketplace.json"
+import Web3 from 'web3'
+
 
 
 const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
 const client = new Web3Storage({ token: token });
 const privateKey = process.env.REACT_APP_PRIVATE_KEY;
+console.log(privateKey)
 const wallet = new Wallet(privateKey);
 
 const provider = getDefaultProvider("https://goerli.optimism.io/");
 const signer = wallet.connect(provider);
 
 
-const db = new Database({ signer });
-console.log(db)
+const db = new Database({ signer })
+
+//new manga contract
+//0xc5801B90010c945559Ec736a7882d619B2C7256c
+
+//foreboding mantle contracting
+//0x22Cc03FaD19a7104841CE24E99F76fe769AEb016
 
 function MintNFT(){
 
    
-
     const [title, setTitle] = useState('')
     const [plotline, setPlotline] = useState('')
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState('Submit')
     const tableName = "manga_420_27"
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
+    const [price, setPrice] = useState(0)
     
 
     const handleSubmit = async (e) => {
@@ -43,17 +55,61 @@ function MintNFT(){
             setLoading('Submit')
             setTitle('')
             setPlotline('')
-            // Insert a row into the table
-            const { meta: insert } = await db
-            .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
-            .bind(rootCid, localStorage.getItem("metamaskAddress"), title, plotline)
-            .run();
+           
+            
+            try {
+                
+                const accounts =await window.ethereum.request({
+                  method: "eth_requestAccounts",
+                });
+                console.log(accounts[0])
 
-            // Wait for transaction finality
-            await insert.txn?.wait();
-            console.log('done')
-            const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all();
-            console.log(results);
+                const web3Instance = new Web3(window.ethereum);
+                const chainId = await web3Instance.eth.getChainId();
+                
+                console.log("chain id")
+                console.log(chainId)
+
+                if (chainId === 5001) { 
+                  
+                  // await provider.send("eth_requestAccounts", []);
+                  const signer = await provider.getSigner();
+                  
+                  //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
+                    const contract = new ethers.Contract('0x22Cc03FaD19a7104841CE24E99F76fe769AEb016', mantleABI, signer )
+                  const tx = await contract.mint(rootCid, price, {});
+                  const receipt = await tx.wait();
+                  setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
+                  console.log(receipt)
+                  setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
+                   // Insert a row into the table
+                const { meta: insert } = await db
+                .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
+                .bind(rootCid, localStorage.getItem("metamaskAddress"), title, plotline)
+                .run();
+
+                // Wait for transaction finality
+                await insert.txn?.wait()
+                console.log('done')
+                const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all()
+                console.log(results)
+
+                } else {
+                  //alert('switch to mantle testnet');
+                  console.log('switch to mantle')
+                }
+
+
+
+
+                
+              } catch (e) {
+                setError(e.message);
+              }
+
+           
+
+
         }
         catch(error){
             console.log(error)
@@ -78,6 +134,11 @@ function MintNFT(){
                     <div>
                         <label for="plotline">Plotline:</label>
                         <textarea id="plotline" name="plotline" className="form-field" rows="5" value={plotline} onChange={e => setPlotline(e.target.value)} placeholder="Title"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="price">Price: in wei</label>
+                        <input type="number" id="price" value={price} className="form-field" onChange={e => setPrice(e.target.value)} placeholder="Price" />
                     </div>
 
                     <div>

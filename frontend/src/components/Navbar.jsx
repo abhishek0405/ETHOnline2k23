@@ -1,36 +1,64 @@
 import { logo } from "../assets"
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers"
+import Web3 from 'web3'
 
 
 function Navbar(){
 
-    const [address, setAddress] = useState(null)
+    const [address, setAddress] = useState('')
+    const [accounts, setAccounts] = useState([])
+    const [web3, setWeb3] = useState(null)
+    async function handleConnect(){
+        if (window.ethereum) {
+          try {
+            // Request account access if needed
+            //await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
+            const web3Instance = new Web3(window.ethereum);
+            setWeb3(web3Instance);
+  
+            // Get accounts
+            const accounts = await web3Instance.eth.getAccounts();
+            console.log(accounts)
+            setAccounts(accounts);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+  
+      }
+
+    useEffect(() => {
+        
+        handleConnect()
+        
+      }, [])
 
 
     const btnhandler = () => { 
         console.log('hellp')
-        console.log(address)
+        handleConnect()
 
 
-        if(localStorage.getItem('metamaskConnect') !== 'true'){
-            if (window.ethereum) { 
+        // if(localStorage.getItem('metamaskConnect') !== 'true'){
+        //     if (window.ethereum) { 
       
-                window.ethereum 
-                  .request({ method: "eth_requestAccounts" }) 
-                  .then((res) => {
-                      setAddress(res[0])
-                      localStorage.setItem('metamaskConnect', 'true')
-                      localStorage.setItem('metamaskAddress', res[0])
+        //         window.ethereum 
+        //           .request({ method: "eth_requestAccounts" }) 
+        //           .then((res) => {
+        //               setAddress(res[0])
+        //               localStorage.setItem('metamaskConnect', 'true')
+        //               localStorage.setItem('metamaskAddress', res[0])
                    
-                  }); 
-              } else { 
-                alert("install metamask extension!!"); 
-              } 
-        }
-        else{
-            setAddress(localStorage.getItem('metamaskAddress'))
-        }
+        //           }); 
+        //       } else { 
+        //         alert("install metamask extension!!"); 
+        //       } 
+        // }
+        // else{
+        //     setAddress(localStorage.getItem('metamaskAddress'))
+        // }
   
        
     }
@@ -38,10 +66,10 @@ function Navbar(){
 
    
 
-    useEffect(() => {
-        btnhandler()
+    // useEffect(() => {
+    //     btnhandler()
     
-      }, []); 
+    //   }, []); 
 
     // const [account, setAccount] = useState("");
 
@@ -88,11 +116,11 @@ function Navbar(){
                     
                 </ul>
 
-                {address === null ? (
+                {accounts.length === 0 ? (
                     <button className="btn btn-orange" onClick={btnhandler}>Connect wallet</button>
                 ) : (
 
-                    <div>{address}</div>
+                    <div>{accounts[0]}</div>
                     
                 )}
                 
