@@ -18,7 +18,7 @@ function EditCharacter() {
     const [name, setName] = useState('')
     const [currImg, setCurrImg] = useState('')
     const [loading, setLoading] = useState(false)
-    const JWT = process.env.REACT_APP_JWT
+    //const JWT = process.env.REACT_APP_JWT
     
 
 

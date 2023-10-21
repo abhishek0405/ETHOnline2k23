@@ -168,6 +168,10 @@ input[type="text"]{
   color: #161616b1;
 }
 
+input[type="number"]{
+  color: #161616b1;
+}
+
 textarea{
   color: #161616b1;
 }
