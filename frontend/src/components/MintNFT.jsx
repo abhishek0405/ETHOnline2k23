@@ -24,7 +24,7 @@ const signerOptimism = wallet.connect(providerOptimism);
 const db = new Database({ signerOptimism })
 console.log("db",db)
 //new manga contract
-//0xc5801B90010c945559Ec736a7882d619B2C7256c
+//0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2
 
 //foreboding mantle contracting
 //0x22Cc03FaD19a7104841CE24E99F76fe769AEb016
@@ -49,8 +49,12 @@ function MintNFT(){
         try{
             const fileInput = document.querySelector('input[type="file"]')
             setLoading('Loading')
-            console.log(fileInput.files[0])
-            const rootCid = await client.put(fileInput.files)
+            //fileInput.files[0].name = title
+            const selectedFile = fileInput.files[0]
+            console.log(fileInput.files[0].name)
+            const newFile = new File([selectedFile], title, { type: selectedFile.type });
+  
+            const rootCid = await client.put([newFile])
             console.log(rootCid)
             setMessage('Successfully uploaded: ' + rootCid)
             setLoading('Submit')
@@ -84,10 +88,10 @@ function MintNFT(){
                   const signer = await provider.getSigner();
                   
                   //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
-                    const contract = new ethers.Contract('0x2BB74dAe7F6520dcc10b32400B7ee583f4F81ACd', mangaABI, signer )
+                    const contract = new ethers.Contract('0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2', mangaABI, signer )
                   const tx = await contract.createToken(rootCid, price);
                   const receipt = await tx.wait();
-                  setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
+                  
                   console.log("minted succesfully")
                   console.log(receipt)
                  //switch chain
@@ -97,14 +101,15 @@ function MintNFT(){
                   });
                    // Insert a row into the table
                 
-                // const { meta: insert } = await db
-                // .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
-                // .bind(rootCid, accounts[0], title, plotline)
-                // .run();
-                // console.log("executing db statement")
-                // // Wait for transaction finality
-                // await insert.txn?.wait()
-                // console.log('done')
+                const { meta: insert } = await db
+                .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
+                .bind(rootCid, accounts[0], title, plotline)
+                .run();
+                console.log("executing db statement")
+                // Wait for transaction finality
+                await insert.txn?.wait()
+                console.log('done')
+                setMessage('Successfully minted: ' + receipt.transactionHash)
                 const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all()
                 console.log(results)
 
