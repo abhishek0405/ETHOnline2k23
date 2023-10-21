@@ -6,6 +6,7 @@ import { Database } from "@tableland/sdk"
 import { Wallet, getDefaultProvider } from "ethers"
 import { ethers } from "ethers"
 import mantleABI from "../contracts/MantleMarketplace.json"
+import mangaABI from "../contracts/MarketKornerABI.json"
 import Web3 from 'web3'
 
 
@@ -16,11 +17,11 @@ const privateKey = process.env.REACT_APP_PRIVATE_KEY;
 console.log(privateKey)
 const wallet = new Wallet(privateKey);
 
-const provider = getDefaultProvider("https://goerli.optimism.io/");
-const signer = wallet.connect(provider);
+const providerOptimism = getDefaultProvider("https://goerli.optimism.io/");
+const signerOptimism = wallet.connect(providerOptimism);
 
 
-const db = new Database({ signer })
+const db = new Database({ signerOptimism })
 
 //new manga contract
 //0xc5801B90010c945559Ec736a7882d619B2C7256c
@@ -71,13 +72,15 @@ function MintNFT(){
                 console.log(chainId)
 
                 if (chainId === 5001) { 
+
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
                   
-                  // await provider.send("eth_requestAccounts", []);
+                  //await provider.send("eth_requestAccounts", []);
                   const signer = await provider.getSigner();
                   
                   //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
-                    const contract = new ethers.Contract('0x22Cc03FaD19a7104841CE24E99F76fe769AEb016', mantleABI, signer )
-                  const tx = await contract.mint(rootCid, price, {});
+                    const contract = new ethers.Contract('0xc5801B90010c945559Ec736a7882d619B2C7256c', mangaABI, signer )
+                  const tx = await contract.createToken(rootCid, price);
                   const receipt = await tx.wait();
                   setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
                   console.log(receipt)
@@ -99,10 +102,7 @@ function MintNFT(){
                   console.log('switch to mantle')
                 }
 
-
-
-
-                
+ 
               } catch (e) {
                 setError(e.message);
               }
