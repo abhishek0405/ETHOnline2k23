@@ -6,7 +6,7 @@ import { RingLoader
  import { Web3Storage } from 'web3.storage'
  import { Wallet, getDefaultProvider } from "ethers";
  import { Database } from "@tableland/sdk";
-
+ const { ethereum } = window;
 
 
 
@@ -19,6 +19,9 @@ const wallet = new Wallet(privateKey);
 const provider = getDefaultProvider("https://goerli.optimism.io/");
 const signer = wallet.connect(provider);
 const db = new Database({ signer });
+const accounts =await window.ethereum.request({
+  method: "eth_requestAccounts",
+});
 function CreateCharacter() {
 
     const [prompt, setPrompt] = useState("")
@@ -47,6 +50,7 @@ function CreateCharacter() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(accounts[0]);
         console.log(prompt)
         try{
           setLoading(true)
@@ -72,6 +76,10 @@ function CreateCharacter() {
       const handleSave = async (e) => {
         e.preventDefault()
         try{
+            await ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x1A4' }],
+            });
             setLoading(true)
             const fileInput = await getFile(imageUrl);
             console.log("file input is ",fileInput)
@@ -79,7 +87,7 @@ function CreateCharacter() {
             console.log(rootCid)
             const { meta: insert } = await db
             .prepare(`INSERT INTO ${tableName} (character_hash, character_name, owner) VALUES (?, ?, ?);`)
-            .bind(rootCid,name, localStorage.getItem("metamaskAddress"))
+            .bind(rootCid,name, accounts[0])
             .run();
 
             // Wait for transaction finality
