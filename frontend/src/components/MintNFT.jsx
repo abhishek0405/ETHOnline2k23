@@ -80,7 +80,7 @@ function MintNFT(){
                   const signer = await provider.getSigner();
                   
                   //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
-                    const contract = new ethers.Contract('0xc5801B90010c945559Ec736a7882d619B2C7256c', mangaABI, signer )
+                    const contract = new ethers.Contract('0x2BB74dAe7F6520dcc10b32400B7ee583f4F81ACd', mangaABI, signer )
                   const tx = await contract.createToken(rootCid, price);
                   const receipt = await tx.wait();
                   setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
@@ -93,14 +93,14 @@ function MintNFT(){
                   });
                    // Insert a row into the table
                 
-                const { meta: insert } = await db
-                .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
-                .bind(rootCid, accounts[0], title, plotline)
-                .run();
-                console.log("executing db statement")
-                // Wait for transaction finality
-                await insert.txn?.wait()
-                console.log('done')
+                // const { meta: insert } = await db
+                // .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
+                // .bind(rootCid, accounts[0], title, plotline)
+                // .run();
+                // console.log("executing db statement")
+                // // Wait for transaction finality
+                // await insert.txn?.wait()
+                // console.log('done')
                 const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all()
                 console.log(results)
 
