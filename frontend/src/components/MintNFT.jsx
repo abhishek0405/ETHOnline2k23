@@ -22,14 +22,15 @@ const signer = wallet.connect(provider);
 
 const db = new Database({ signer })
 
+//new manga contract
 //0xc5801B90010c945559Ec736a7882d619B2C7256c
+
+//foreboding mantle contracting
+//0x22Cc03FaD19a7104841CE24E99F76fe769AEb016
 
 function MintNFT(){
 
    
-    
-    
-
     const [title, setTitle] = useState('')
     const [plotline, setPlotline] = useState('')
     const [message, setMessage] = useState('')
@@ -74,12 +75,11 @@ function MintNFT(){
                   // await provider.send("eth_requestAccounts", []);
                   const signer = await provider.getSigner();
                   
-                 
-                    const contract = new ethers.Contract('0xc5801B90010c945559Ec736a7882d619B2C7256c', mantleABI, signer )
-                    console.log(contract)
-                  const tx = await contract.createToken(rootCid, price)
-                  console.log(tx)
+                  //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
+                    const contract = new ethers.Contract('0x22Cc03FaD19a7104841CE24E99F76fe769AEb016', mantleABI, signer )
+                  const tx = await contract.mint(rootCid, price, {});
                   const receipt = await tx.wait();
+                  setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
                   console.log(receipt)
                   setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
                    // Insert a row into the table
