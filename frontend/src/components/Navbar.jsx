@@ -13,7 +13,7 @@ function Navbar(){
         if (window.ethereum) {
           try {
             // Request account access if needed
-            //await window.ethereum.request({ method: 'eth_requestAccounts' });
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
             
             const web3Instance = new Web3(window.ethereum);
             setWeb3(web3Instance);
