@@ -1,14 +1,43 @@
-import React, { useState,useRef } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
 import { Resizable } from 're-resizable'; // Use re-resizable instead of react-resizable
 import './Canvas.css';
 import ImageWithTextFunction from './ImageWithTextFunction';
+import { Wallet, getDefaultProvider } from "ethers";
+import { Database } from "@tableland/sdk";
+import html2canvas from 'html2canvas';
+
+const privateKey = process.env.REACT_APP_PRIVATE_KEY;
+const wallet = new Wallet(privateKey);
+const provider = getDefaultProvider("https://goerli.optimism.io/");
+const signer = wallet.connect(provider);
+const db = new Database({ signer });
+
 const Canvas = () => {
+
+  useEffect(() => {
+    fetchCharacterList();
+
+  }, []);
+  const [characterList,setCharacterlist] = useState([])
   const [images, setImages] = useState([]);
   const [dialogues, setDialogues] = useState([]);
   const [text, setText] = useState('');
   const [imageUrl, setImageUrl] = useState('./dialogueBox.png');
   const [currImg, setCurrImg] = useState('')
+  const tableName = "character_420_28";
+  const contentToMergeRef = useRef(null);
+
+  const handleDownload = () => {
+    if (contentToMergeRef.current) {
+      html2canvas(contentToMergeRef.current).then((canvas) => {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = canvas.toDataURL('image/png');
+        downloadLink.download = 'merged_content.png';
+        downloadLink.click();
+      });
+    }
+  };
 
   const canvasRef = useRef(null);
 
@@ -20,6 +49,15 @@ const Canvas = () => {
   const handleTextChange = (e) => {
     setText(e.target.value);
   };
+
+  const fetchCharacterList = async()=>{
+    console.log('done')
+    const { results } = await db.prepare(`SELECT * FROM ${tableName} WHERE owner = '${localStorage.getItem('metamaskAddress')}' ;`).all();
+    console.log(results)
+    setCharacterlist(results)
+    
+  }
+
 
   const handleClick = async(url) => {
     setCurrImg(url);
@@ -58,37 +96,45 @@ const Canvas = () => {
                     <div className='flex-auto'>
                     
                     <div className='img-menu mt-12 ml-2  overflow-y-scroll'>
+                    {/* <div className='img-menu mt-12 ml-2 flex overflow-x-auto'> */}
                     <h3 className='font-bold mb-2 text-lg'>Select character</h3>
-                        <img src="https://ipfs.io/ipfs/Qmf9fzrrg9ZnSUuPwGQUbGepwhvQUyxe6AwP1J9zoXU821" className='imgs mb-4' alt="img1" style={{
-                            border: "https://ipfs.io/ipfs/Qmf9fzrrg9ZnSUuPwGQUbGepwhvQUyxe6AwP1J9zoXU821" === currImg ? '6px solid orange' : 'none',
-                        }}
-                        onClick={() => handleClick("https://ipfs.io/ipfs/Qmf9fzrrg9ZnSUuPwGQUbGepwhvQUyxe6AwP1J9zoXU821")}
-
-                        
-                        />
-
-
-                        <img src="https://ipfs.io/ipfs/QmQPoCVQNY2fSXGENmS22Ha4DeL83bQP2s2DDesiuASFDf" className='imgs mb-4' alt="img2"
-                        onClick={() => handleClick("https://ipfs.io/ipfs/QmQPoCVQNY2fSXGENmS22Ha4DeL83bQP2s2DDesiuASFDf")}
-                        style={{
-                            border: "https://ipfs.io/ipfs/QmQPoCVQNY2fSXGENmS22Ha4DeL83bQP2s2DDesiuASFDf" === currImg ? '6px solid orange' : 'none',
-                        }}
-
-                        />
+                      
+                    <div>
+                      {characterList.length === 0 ? (
+                        <div>Loading...</div>
+                      ) : (
+                        characterList.map((obj, index) => (
+                          <img
+                            key={index}
+                            src={`https://ipfs.io/ipfs/${obj.character_hash}/${obj.character_name}`}
+                            alt={`Image ${index}`}
+                            className='imgs mb-4' style={{
+                              border: `https://ipfs.io/ipfs/${obj.character_hash}/${obj.character_name}` === currImg ? '6px solid orange' : 'none',
+                          }}
+                          onClick={() => handleClick(`https://ipfs.io/ipfs/${obj.character_hash}/${obj.character_name}`)}
+  
+                          />
+                        ))
+                      )}
+                    </div>
                     </div>
 
                 </div>
       </div>
-     <input type="file" accept="image/*" multiple onChange={handleImageUpload} />
+    
+     <div>
+     <br></br>
      <input
         type="text"
         value={text}
         onChange={handleTextChange}
         placeholder="Enter text here"
       />
-      <button onClick={addDialogue}>Add Dialogue</button>
+      <p></p>
+        <button onClick={addDialogue}>Add Dialogue</button>
+      </div>
 
-    <div className="canvas" style={{color:'black'}}>
+    <div ref={contentToMergeRef} className="canvas" style={{color:'black',marginLeft:'300px',marginTop:'-600px'}}>
      
       <div className="image-container">
         {images.map((image, index) => (
@@ -146,6 +192,7 @@ const Canvas = () => {
         ))}
       </div>
     </div>
+    <button onClick={handleDownload}>Download Merged Image</button>
     </>
   );
 

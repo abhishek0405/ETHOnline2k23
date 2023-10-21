@@ -4,6 +4,9 @@ import Navbar from './Navbar'
 import { RingLoader
  } from 'react-spinners';
  import { Web3Storage } from 'web3.storage'
+ import { Wallet, getDefaultProvider } from "ethers";
+ import { Database } from "@tableland/sdk";
+
 
 
 
@@ -11,17 +14,21 @@ import { RingLoader
 
 // IPFS Storage contract: KT1BaojNXyukJ8AzoyJ1RZousTZNa3fXSeuZ
 
-
-
+const privateKey = process.env.REACT_APP_PRIVATE_KEY;
+const wallet = new Wallet(privateKey);
+const provider = getDefaultProvider("https://goerli.optimism.io/");
+const signer = wallet.connect(provider);
+const db = new Database({ signer });
 function CreateCharacter() {
 
     const [prompt, setPrompt] = useState("")
     const [imageUrl, setImageUrl] = useState('')
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)
+
     const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
     const client = new Web3Storage({ token: token });
-
+    const tableName = "character_420_28"
     const JWT = process.env.REACT_APP_JWT
     
 
@@ -64,11 +71,20 @@ function CreateCharacter() {
       const handleSave = async (e) => {
         e.preventDefault()
         try{
+            setLoading(true)
             const fileInput = await getFile(imageUrl);
             console.log("file input is ",fileInput)
             const rootCid = await client.put(fileInput)
             console.log(rootCid)
-            alert("saved succesfully")
+            const { meta: insert } = await db
+            .prepare(`INSERT INTO ${tableName} (character_hash, character_name, owner) VALUES (?, ?, ?);`)
+            .bind(rootCid,name, localStorage.getItem("metamaskAddress"))
+            .run();
+
+            // Wait for transaction finality
+            await insert.txn?.wait();
+            console.log('done')
+            setLoading(false)
         }
         catch(error){
             console.log(error)

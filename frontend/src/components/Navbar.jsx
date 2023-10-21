@@ -5,11 +5,12 @@ import { ethers } from "ethers"
 
 function Navbar(){
 
-    const [address, setAddress] = useState('')
+    const [address, setAddress] = useState(null)
 
 
     const btnhandler = () => { 
         console.log('hellp')
+        console.log(address)
 
 
         if(localStorage.getItem('metamaskConnect') !== 'true'){
@@ -87,7 +88,7 @@ function Navbar(){
                     
                 </ul>
 
-                {address === '' ? (
+                {address === null ? (
                     <button className="btn btn-orange" onClick={btnhandler}>Connect wallet</button>
                 ) : (
 
