@@ -84,7 +84,7 @@ function MintNFT(){
                   const receipt = await tx.wait();
                   setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
                   console.log(receipt)
-                  setSuccess(`Successfully minted new NFT with transaction hash: ${receipt.transactionHash}`)
+                 
                    // Insert a row into the table
                 const { meta: insert } = await db
                 .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
