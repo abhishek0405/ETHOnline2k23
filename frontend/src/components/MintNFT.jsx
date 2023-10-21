@@ -11,7 +11,6 @@ import Web3 from 'web3'
 const { ethereum } = window;
 
 
-
 const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
 const client = new Web3Storage({ token: token });
 const privateKey = process.env.REACT_APP_PRIVATE_KEY;
@@ -60,6 +59,11 @@ function MintNFT(){
            
             
             try {
+                await ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x1389' }],
+                  });
+                
                 
                 const accounts =await window.ethereum.request({
                   method: "eth_requestAccounts",

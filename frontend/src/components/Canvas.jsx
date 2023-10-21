@@ -6,12 +6,17 @@ import ImageWithTextFunction from './ImageWithTextFunction';
 import { Wallet, getDefaultProvider } from "ethers";
 import { Database } from "@tableland/sdk";
 import html2canvas from 'html2canvas';
+const { ethereum } = window;
 
 const privateKey = process.env.REACT_APP_PRIVATE_KEY;
 const wallet = new Wallet(privateKey);
 const provider = getDefaultProvider("https://goerli.optimism.io/");
 const signer = wallet.connect(provider);
 const db = new Database({ signer });
+
+const accounts =await window.ethereum.request({
+  method: "eth_requestAccounts",
+});
 
 const Canvas = () => {
 
@@ -52,7 +57,7 @@ const Canvas = () => {
 
   const fetchCharacterList = async()=>{
     console.log('done')
-    const { results } = await db.prepare(`SELECT * FROM ${tableName} WHERE owner = '${localStorage.getItem('metamaskAddress')}' ;`).all();
+    const { results } = await db.prepare(`SELECT * FROM ${tableName} WHERE owner = '${accounts[0]}' ;`).all();
     console.log(results)
     setCharacterlist(results)
     
