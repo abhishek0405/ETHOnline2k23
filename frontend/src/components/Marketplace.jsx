@@ -33,6 +33,7 @@ function Marketplace(){
   const [loading, setLoading] = useState(true)
   const tableName = "manga_420_27";
   const [mangaList,setMangaList] = useState([]);
+  const [buying, setBuying] = useState('Buy')
 
   const fetchMangaList = async()=>{
     console.log('done')
@@ -56,7 +57,7 @@ function Marketplace(){
     async function getData(){
         const data = []
         const mangaResults = await fetchMangaList()
-
+       //mantle
         await ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: '0x1389' }],
@@ -79,7 +80,8 @@ function Marketplace(){
         const market = await contract.getAll()
         console.log(market)
         //console.log("here",parseInt(market[0]._hex, 16))
-          console.log(mangaResults)
+          console.log("db mangas",mangaResults)
+        
         for(var i = 0; i < market.length; i++){
             
             if(parseInt(market[i]._hex, 16) === 1){
@@ -95,8 +97,8 @@ function Marketplace(){
                 
 
                 var json = {};
-                console.log("json",json)
-                Object.assign(json, {price : p})
+                
+                Object.assign(json, {price : parseInt(p._hex)})
                 Object.assign(json, {key : i})
                 Object.assign(json, {tokenId : i})
                 Object.assign(json, {title : foundManga.title})
@@ -104,11 +106,12 @@ function Marketplace(){
                 Object.assign(json, {imgSrc : imgSrc})
                 
                 data.push(json)
-
+                console.log(data)
                 // eslint-disable-next-line no-loop-func
                 //setIpfsData(prevState => [...prevState, json])
             }
         }
+        console.log(data)
         setIpfsData(data)
         setLoading(false)
 
@@ -140,6 +143,7 @@ function Marketplace(){
 
     e.preventDefault()
     console.log("buying")
+    setBuying('Loading')
     // await provider.send("eth_requestAccounts", []);
     const web3Instance = new Web3(window.ethereum);
     const chainId = await web3Instance.eth.getChainId();
@@ -156,16 +160,14 @@ function Marketplace(){
     if (chainId === 5001) { 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       var signer = await provider.getSigner();
-      // const web3 = new Web3(provider)
+     
       console.log(signer)
       const contract = new ethers.Contract(contractAddress, mangaABI, signer);
       const tokenId = manga.tokenId;
-      // const price = ?
-      //understand which method to use
-      // const wei = new ethers.BigNumber(manga.price);
-      // const ether = ethers.utils.formatEther(wei);
-      const a = await contract.createMarketSale(parseInt(tokenId), {value: ethers.utils.parseUnits(manga.price.toString(), 'wei')})
+   
+      const a = await contract.buy(parseInt(tokenId), {value: manga.price})
       console.log(a)
+      setBuying('Added')
     }
     else{
       alert('switch to mantle')
@@ -202,7 +204,7 @@ function Marketplace(){
             <h2 class="text-xl font-bold mb-4">{d.title}</h2>
             <p>{d.plotline}</p>
             <p class="text-md font-bold mt-2">{d.price} Wei</p>
-            <button class="btn btn-orange mt-4 ml-20" onClick={(e) => handleBuy(e, d)}>Buy</button>
+            <button class="btn btn-orange mt-4 ml-20" onClick={(e) => handleBuy(e, d)}>{buying}</button>
           </div>
         </div>
            

@@ -14,15 +14,13 @@ const { ethereum } = window;
 const token = process.env.REACT_APP_WEB3_STORAGE_TOKEN;
 const client = new Web3Storage({ token: token });
 const privateKey = process.env.REACT_APP_PRIVATE_KEY;
-console.log(privateKey)
 const wallet = new Wallet(privateKey);
-
-const providerOptimism = getDefaultProvider("https://goerli.optimism.io/");
-const signerOptimism = wallet.connect(providerOptimism);
-
-
-const db = new Database({ signerOptimism })
-console.log("db",db)
+const provider = getDefaultProvider("https://goerli.optimism.io/");
+const signer = wallet.connect(provider);
+const db = new Database({ signer });
+const accounts =await window.ethereum.request({
+  method: "eth_requestAccounts",
+});
 //new manga contract
 //0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2
 
@@ -40,6 +38,7 @@ function MintNFT(){
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [price, setPrice] = useState(0)
+    
     const contractAddress = "0x3Ca00aB9fe5791150C6713d7D9c862c382BA9BFa"
     
 
@@ -65,16 +64,31 @@ function MintNFT(){
            
             
             try {
+                //optimism
+                await ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x1A4' }],
+                });
+                  console.log(accounts[0])
+                  //insert to db
+                  const { meta: insert } = await db
+                  .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
+                  .bind(rootCid, 'accounts[0]', title, plotline)
+                  .run();
+                  console.log("executing db statement")
+                  // Wait for transaction finality
+                  await insert.txn?.wait()
+                  console.log('done')
+                //   setMessage('Successfully minted: ' + receipt.transactionHash)
+                  const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all()
+                  console.log(results)
+
+                //mantle
                 await ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: '0x1389' }],
-                  });
-                
-                
-                const accounts =await window.ethereum.request({
-                  method: "eth_requestAccounts",
-                });
-                console.log(accounts[0])
+                });             
+
 
                 const web3Instance = new Web3(window.ethereum);
                 const chainId = await web3Instance.eth.getChainId();
@@ -90,30 +104,29 @@ function MintNFT(){
                   const signer = await provider.getSigner();
                   
                   //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
-                    const contract = new ethers.Contract('0x22Cc03FaD19a7104841CE24E99F76fe769AEb016', mantleABI, signer )
+                    const contract = new ethers.Contract(contractAddress, mantleABI, signer )
                   const tx = await contract.mint(rootCid, price, {});
                   const receipt = await tx.wait();
                   
                   console.log("minted succesfully")
                   console.log(receipt)
+                  setMessage('Successfully minted: ' + receipt.transactionHash)
+                  
                  //switch chain
-                 await ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x1A4' }],
-                  });
+
                    // Insert a row into the table
                 
-                const { meta: insert } = await db
-                .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
-                .bind(rootCid, accounts[0], title, plotline)
-                .run();
-                console.log("executing db statement")
-                // Wait for transaction finality
-                await insert.txn?.wait()
-                console.log('done')
-                setMessage('Successfully minted: ' + receipt.transactionHash)
-                const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all()
-                console.log(results)
+                // const { meta: insert } = await db
+                // .prepare(`INSERT INTO ${tableName} (manga_hash, owner, title, plotline) VALUES (?, ?, ?, ?);`)
+                // .bind(rootCid, accounts[0], title, plotline)
+                // .run();
+                // console.log("executing db statement")
+                // // Wait for transaction finality
+                // await insert.txn?.wait()
+                // console.log('done')
+                // setMessage('Successfully minted: ' + receipt.transactionHash)
+                // const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all()
+                // console.log(results)
 
                 } else {
                   //alert('switch to mantle testnet');
