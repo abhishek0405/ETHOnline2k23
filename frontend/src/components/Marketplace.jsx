@@ -56,7 +56,7 @@ function Marketplace(){
     async function getData(){
         const data = []
         const mangaResults = await fetchMangaList()
-
+       //mantle
         await ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: '0x1389' }],
@@ -75,11 +75,10 @@ function Marketplace(){
         if (chainId === 5001) { 
             var signer = await provider.getSigner();
             const contract = new ethers.Contract(contractAddress, mangaABI, signer);
-        console.log("contract",contract);
         const market = await contract.fetchMarketItems()
-        console.log(market)
+        console.log("market",market)
         //console.log("here",parseInt(market[0]._hex, 16))
-          console.log(mangaResults)
+          console.log("db mangas",mangaResults)
         for(var i = 0; i < market.length; i++){
             
             if(market[i].sold === false){
