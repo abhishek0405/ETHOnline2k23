@@ -21,6 +21,9 @@ const wallet = new Wallet(privateKey);
 const provider = getDefaultProvider("https://goerli.optimism.io/");
 const signer = wallet.connect(provider);
 const db = new Database({ signer });
+const contractAddress = "0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2"
+
+
 function Marketplace(){
 
    
@@ -36,7 +39,7 @@ function Marketplace(){
     const accounts =await window.ethereum.request({
       method: "eth_requestAccounts",
     })
-    const { results } = await db.prepare(`SELECT * FROM ${tableName} WHERE owner = '${accounts[0]}' ;`).all();
+    const { results } = await db.prepare(`SELECT * FROM ${tableName};`).all();
     console.log(results)
     setMangaList(results)
     return results
@@ -71,7 +74,7 @@ function Marketplace(){
 
         if (chainId === 5001) { 
             var signer = await provider.getSigner();
-            const contract = new ethers.Contract('0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2', mangaABI, signer);
+            const contract = new ethers.Contract(contractAddress, mangaABI, signer);
         console.log("contract",contract);
         const market = await contract.fetchMarketItems()
         console.log(market)
@@ -82,7 +85,7 @@ function Marketplace(){
             if(market[i].sold === false){
                 var currData = await contract.tokenURI(i+1)
                
-                var p = parseInt(market[i][3]._hex, 16)
+                var p = parseInt(market[i].price._hex, 16)
                 const foundManga = mangaResults.find((manga) => manga.manga_hash === currData)
                 if(!foundManga) continue
                
@@ -119,7 +122,7 @@ function Marketplace(){
 
 
         
-    }
+    } 
     getData()
     
 }, [])
@@ -155,11 +158,11 @@ function Marketplace(){
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       var signer = await provider.getSigner();
       console.log(signer)
-      const contract = new ethers.Contract('0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2', mangaABI, signer);
-      const tokenId = manga.manga_hash;
+      const contract = new ethers.Contract(contractAddress, mangaABI, signer);
+      const tokenId = manga.tokenId;
       // const price = ?
       //understand which method to use
-      const a = await contract.buy(parseInt(tokenId), {value: 0.1})
+      const a = await contract.createMarketSale(parseInt(tokenId), {value: manga.price})
       console.log(a)
     }
     else{
@@ -197,7 +200,7 @@ function Marketplace(){
             <h2 class="text-xl font-bold mb-4">{d.title}</h2>
             <p>{d.plotline}</p>
             <p class="text-md font-bold mt-2">{d.price} Wei</p>
-            <button class="btn btn-orange mt-4 ml-20">Buy</button>
+            <button class="btn btn-orange mt-4 ml-20" onClick={(e) => handleBuy(e, d)}>Buy</button>
           </div>
         </div>
            
