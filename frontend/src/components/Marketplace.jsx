@@ -21,7 +21,7 @@ const wallet = new Wallet(privateKey);
 const provider = getDefaultProvider("https://goerli.optimism.io/");
 const signer = wallet.connect(provider);
 const db = new Database({ signer });
-const contractAddress = "0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2"
+const contractAddress = "0x3Ca00aB9fe5791150C6713d7D9c862c382BA9BFa"
 
 
 function Marketplace(){
@@ -76,16 +76,15 @@ function Marketplace(){
             var signer = await provider.getSigner();
             const contract = new ethers.Contract(contractAddress, mangaABI, signer);
         console.log("contract",contract);
-        const market = await contract.fetchMarketItems()
+        const market = await contract.getAll()
         console.log(market)
         //console.log("here",parseInt(market[0]._hex, 16))
           console.log(mangaResults)
         for(var i = 0; i < market.length; i++){
             
-            if(market[i].sold === false){
-                var currData = await contract.tokenURI(i+1)
-               
-                var p = parseInt(market[i].price._hex, 16)
+            if(parseInt(market[i]._hex, 16) === 1){
+              var currData = await contract.tokenURI(i)
+              var p = await contract._tokenIdToPrice(i)
                 const foundManga = mangaResults.find((manga) => manga.manga_hash === currData)
                 if(!foundManga) continue
                
@@ -99,7 +98,7 @@ function Marketplace(){
                 console.log("json",json)
                 Object.assign(json, {price : p})
                 Object.assign(json, {key : i})
-                Object.assign(json, {tokenId : i+1})
+                Object.assign(json, {tokenId : i})
                 Object.assign(json, {title : foundManga.title})
                 Object.assign(json, {plotline : foundManga.plotline})
                 Object.assign(json, {imgSrc : imgSrc})
@@ -157,12 +156,15 @@ function Marketplace(){
     if (chainId === 5001) { 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       var signer = await provider.getSigner();
+      // const web3 = new Web3(provider)
       console.log(signer)
       const contract = new ethers.Contract(contractAddress, mangaABI, signer);
       const tokenId = manga.tokenId;
       // const price = ?
       //understand which method to use
-      const a = await contract.createMarketSale(parseInt(tokenId), {value: manga.price})
+      // const wei = new ethers.BigNumber(manga.price);
+      // const ether = ethers.utils.formatEther(wei);
+      const a = await contract.createMarketSale(parseInt(tokenId), {value: ethers.utils.parseUnits(manga.price.toString(), 'wei')})
       console.log(a)
     }
     else{

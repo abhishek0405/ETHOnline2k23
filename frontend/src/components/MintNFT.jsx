@@ -40,6 +40,7 @@ function MintNFT(){
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [price, setPrice] = useState(0)
+    const contractAddress = "0x3Ca00aB9fe5791150C6713d7D9c862c382BA9BFa"
     
 
     const handleSubmit = async (e) => {
@@ -60,6 +61,7 @@ function MintNFT(){
             setLoading('Submit')
             setTitle('')
             setPlotline('')
+            setPrice(0)
            
             
             try {
@@ -88,8 +90,8 @@ function MintNFT(){
                   const signer = await provider.getSigner();
                   
                   //const contract = new ethers.Contract('0x9eeF83ebA708c760b9D8f761835a47B9ff200722', forebodingABI, signer);
-                    const contract = new ethers.Contract('0x0E5E2E41c0199cF4e46F05EE6D7BC29CF1873DD2', mangaABI, signer )
-                  const tx = await contract.createToken(rootCid, price);
+                    const contract = new ethers.Contract('0x22Cc03FaD19a7104841CE24E99F76fe769AEb016', mantleABI, signer )
+                  const tx = await contract.mint(rootCid, price, {});
                   const receipt = await tx.wait();
                   
                   console.log("minted succesfully")
